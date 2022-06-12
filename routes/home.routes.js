@@ -14,9 +14,14 @@ const express = require('express'),
 //         .status(500)
 //         .send({ message: 'Error while getting users' })
 //   })
-  
+
+// app.get("/products/:productId", function (request, response) {
+//   response.send("productId: " + request.params["productId"])
+// });
   router
     .route('/')
-    .get(HomeController.getPage)
-
+    .get(HomeController.getMainPage)
+  router
+    .route('/:roomName')
+    .get(HomeController.getChatRoom)
   module.exports = router

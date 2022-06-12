@@ -1,15 +1,8 @@
-const fs = require('fs')
-
+const { PrismaClient } = require('@prisma/client'),
+      prisma = new PrismaClient()
 class UsersService {
-  getUsers() {
-    return new Promise((res, rej) => {
-      fs.readFile('data.json', (err, data) => {
-        if (err) {
-          return res(false)
-        }
-        return res(JSON.parse(data))
-      })
-    })
+  getUsers(data) {
+        return data
   }
 
   createUser(data) {
@@ -21,34 +14,6 @@ class UsersService {
           if (err) return res(false)
 
           return res({ message: 'User created.' })
-        }
-      )
-    })
-  }
-
-  updateUser(data) {
-    return new Promise((res, rej) => {
-      fs.writeFile(
-        'data.json',
-        JSON.stringify(data),
-        (err, response) => {
-          if (err) return res(false)
-
-          return res({ message: 'User updated.' })
-        }
-      )
-    })
-  }
-
-  deleteUser(data) {
-    return new Promise((res, rej) => {
-      fs.writeFile(
-        'data.json',
-        JSON.stringify(data),
-        (err, response) => {
-          if (err) return res(false)
-
-          return res({ message: 'User deleted.' })
         }
       )
     })

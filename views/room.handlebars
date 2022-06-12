@@ -1,19 +1,18 @@
-    <div class="over-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <div class="container">
       {{> header}}
       <!-- блок чата -->
       <div class="container">
-      <main class="px-3">
-        {{#if reg}}
-          <h1>Вы авторизованы!</h1>
-          <p class="lead">Для начала общения выберете комнату чата!</p>
-        {{else}}
-          <h1>Добро пожаловать в мой замечательный чат!</h1>
-          <p class="lead">Для начала общения авторизируйтесь и выберете комнату чата!</p>
-          <p class="lead">
-            <a href="/sign-in" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Авторизоваться!</a>
-          </p>
-        {{/if}} 
-      </main>
+        <!-- вывод сообщений -->
+        <div class="bg-warning p-3 row chat-output">
+          <div id="AllMassages"></div>
+        </div>
+        <!-- поле ввода -->
+        <div class="bg-warning p-3 row text-center">
+          <form id="FormMassage">
+            <textarea type="text" name="SendMassage" id="SendMassage" class="col-sm-9"></textarea>
+            <input type="submit" value="Отправить" class="col-sm-2 btn btn-primary mb-3">
+          </form>
+        </div>
       </div>
     <!-- Подключаем jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

@@ -8,6 +8,22 @@ datasource db {
 }
 
 model chat_room {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(20)
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(20)
+  urlRooms String @db.VarChar(60)
+}
+
+model massage {
+  id         Int       @id @default(autoincrement())
+  userLogin  String    @db.VarChar(30)
+  nameRoom   String    @db.VarChar(20)
+  massage    String    @db.VarChar(255)
+  created_at DateTime  @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+}
+
+model users {
+  id       Int    @id @default(autoincrement())
+  email    String @db.VarChar(60)
+  password String @db.VarChar(80)
 }

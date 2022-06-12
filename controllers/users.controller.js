@@ -1,90 +1,67 @@
 const UsersService = require('../services/users.service')
-
+const { PrismaClient } = require('@prisma/client'),
+      prisma = new PrismaClient()
+const bcrypt = require('bcryptjs'),
+    jwt = require('jsonwebtoken')
+const url = require('node:url')
 class UsersController {
-  getUsers(req, res) {
-    if (req.query.id) {
-      if (req.users.hasOwnProperty(req.query.id))
-        return res
-          .status(200)
-          .send({ data: req.users[req.query.id] })
-      else
-        return res
-          .status(404)
-          .send({ message: 'User not found.' })
-    } else if (!req.users)
-      return res
-        .status(404)
-        .send({ message: 'Users not found.' })
-
-    return res.status(200).send({ data: req.users })
+  async signOut(req,res){
+    console.log('Чистим куку в singuot')
+    return res
+    .clearCookie('email', {signed: true})
+    .redirect('/')
   }
-
   async createUser(req, res) {
-    if (req.body.user && req.body.user.id) {
-      if (req.users.hasOwnProperty(req.body.user.id))
-        return res
-          .status(409)
-          .send({ message: 'User already exists.' })
-
-      req.users[req.body.user.id] = req.body.user
-
-      let result = await UsersService.createUser(req.users)
-
-      if (result) return res.status(200).send(result)
-      else
-        return res
-          .status(500)
-          .send({ message: 'Unable create user.' })
-    } else
-      return res
-        .status(400)
-        .send({ message: 'Bad request.' })
-  }
-
-  async updateUser(req, res) {
-    if (req.body.user && req.body.user.id) {
-      if (!req.users.hasOwnProperty(req.body.user.id))
-        return res
-          .status(404)
-          .send({ message: 'User not found.' })
-
-      req.users[req.body.user.id] = req.body.user
-
-      let result = await UsersService.updateUser(req.users)
-
-      if (result) return res.status(200).send(result)
-      else
-        return res
-          .status(500)
-          .send({ message: 'Unable update user.' })
-    } else
-      return res
-        .status(400)
-        .send({ message: 'Bad request.' })
-  }
-
-  async deleteUser(req, res) {
-    if (req.query.id) {
-      if (req.users.hasOwnProperty(req.query.id)) {
-        delete req.users[req.query.id]
-
-        let result = await UsersService.deleteUser(
-          req.users
-        )
-
-        if (result) return res.status(200).send(result)
-        else
-          return res
-            .status(500)
-            .send({ message: 'Unable delete user.' })
-      } else
-        return res
-          .status(404)
-          .send({ message: 'User not found.' })
-    } else
-      return res
-        .status(400)
-        .send({ message: 'Bad request.' })
+    new Promise(function(resolve, reject) {
+      let result = prisma.users.findMany({
+        where: { email: req.users.email },
+        select: {
+          email: true,
+          password: true,
+        },
+      })
+      setTimeout(() => resolve(result), 1000);
+    }).then(function(result){
+      if (result.length == 0){
+        console.log('зареган '+ result[0]+ ' ' + req.users.email)
+        let salt = bcrypt.genSaltSync(15),
+            password = bcrypt.hashSync(req.users.password, salt)
+          prisma.users.create({
+            data: {
+              email: req.users.email,
+              password: password,
+            }
+          }).then(function(){
+            return prisma.chat_room.findMany()
+          }).then(function(AllRooms){
+            return res
+            .redirect("/")
+          })
+      }else{
+        console.log(req.signedCookies.email)
+        if(!req.signedCookies.email){
+          if(bcrypt.compareSync(req.users.password,result[0].password)){
+            console.log(process.env.JWT)
+            console.log(req.signedCookies.email)
+            return prisma.chat_room.findMany().then(function(AllRooms){
+              return res             
+              .cookie('email', result[0].email, {signed: true})
+              .redirect('/')
+            })
+          }else{
+            return res
+            .status(200)
+            .render('sign-in', { title: 'Sing-up', style: 'sing-in', reg: "Неправильный пароль"})
+          }
+        }else{
+          this.signOut()
+          // console.log('Чистим куку')
+          // return res
+          // .clearCookie('email', {signed: true})
+          // .redirect('/')
+        }
+      }
+    })
   }
 }
 

@@ -1,10 +1,11 @@
 const express = require('express'),
   router = express.Router(),
   UserController = require('../controllers/users.controller'),
-  UsersService = require('../services/users.service')
-
+  cookie_parser = require('cookie-parser')
+ 
+router.use(cookie_parser('1234'))
 router.use(async (req, res, next) => {
-  let data = await UsersService.getUsers()
+  let data = req.body
 
   if (data) {
     req.users = data
@@ -17,9 +18,6 @@ router.use(async (req, res, next) => {
 
 router
   .route('/')
-  .get(UserController.getUsers)
   .post(UserController.createUser)
-  .put(UserController.updateUser)
-  .delete(UserController.deleteUser)
-
+  .get(UserController.signOut)
 module.exports = router
