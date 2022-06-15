@@ -6,23 +6,40 @@ class HomeController {
         if (!req.signedCookies.email){
             return res
             .status(200)
-            .render('home', { title: 'Main', AllRooms: await prisma.chat_room.findMany(), style: 'main'})
+            .render('home', { 
+                title: 'Main', 
+                AllRooms: await prisma.chat_room.findMany(), 
+                style: 'main'
+            })
         }else{
             return res
             .status(200)
-            .render('home', { title: 'Main', AllRooms: await prisma.chat_room.findMany(), style: 'main', reg: `Привет ${req.signedCookies.email}`})
+            .render('home', { 
+                title: 'Main', 
+                AllRooms: await prisma.chat_room.findMany(), 
+                style: 'main', 
+                userName: `${req.signedCookies.email}`
+        })
         }
     }
     async getSingInPage(req,res) {
         return res
             .status(200)
-            .render('sign-in', { title: 'Greetings form Handlebars', style: 'sing-in'})
+            .render('sign-in', { style: 'sing-in'})
     }
     async getChatRoom(req, res){
-        req.params["roomName"]
+        
+        console.log(req.params["roomName"])
+
         return res
         .status(200)
-        .render('sign-in', { title: 'Greetings form Handlebars', style: 'sing-in'})
+        .render('room', { 
+            AllRooms: await prisma.chat_room.findMany(), 
+            style: 'chatroom',
+            styleLvlTwo: '../',
+            userName: `${req.signedCookies.email}`,
+            roomName: req.params["roomName"]
+        })
     }
 }
 module.exports = new HomeController()

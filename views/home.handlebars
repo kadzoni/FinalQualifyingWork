@@ -3,9 +3,16 @@
       <!-- блок чата -->
       <div class="container">
       <main class="px-3">
-        {{#if reg}}
+        {{#if userName}}
           <h1>Вы авторизованы!</h1>
           <p class="lead">Для начала общения выберете комнату чата!</p>
+        <div class="nav-scroller py-1 mb-2">
+          <nav class="nav d-flex justify-content-between" id="RoomsNav">
+            {{#each AllRooms}}
+                <a class="p-2 link-secondary" href="chat{{urlRooms}}">{{name}}{{url_rooms}}</a>
+            {{/each}}
+          </nav>
+        </div>
         {{else}}
           <h1>Добро пожаловать в мой замечательный чат!</h1>
           <p class="lead">Для начала общения авторизируйтесь и выберете комнату чата!</p>

@@ -22,6 +22,6 @@ const express = require('express'),
     .route('/')
     .get(HomeController.getMainPage)
   router
-    .route('/:roomName')
+    .route('/chat/:roomName')
     .get(HomeController.getChatRoom)
   module.exports = router
