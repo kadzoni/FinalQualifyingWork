@@ -55,10 +55,6 @@ class UsersController {
           }
         }else{
           this.signOut()
-          // console.log('Чистим куку')
-          // return res
-          // .clearCookie('email', {signed: true})
-          // .redirect('/')
         }
       }
     })

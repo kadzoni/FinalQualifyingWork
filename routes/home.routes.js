@@ -24,4 +24,5 @@ const express = require('express'),
   router
     .route('/chat/:roomName')
     .get(HomeController.getChatRoom)
+    .post(HomeController.ioshechka)
   module.exports = router

@@ -61,13 +61,24 @@
 					</div>
 
 					<div class="position-relative">
-						<div class="chat-messages p-4" id="allMessage">
-
+						<div class="chat-messages p-4" id="allMessage{{roomName}}">
+              <input type="text" id="roomName" class="d-none" value={{roomName}}>
+              {{#each AllMassage}}
+                <div class="chat-message-left pb-4">
+                  <div>
+                    <div class="text-muted small text-nowrap mt-2">{{created_at}}</div>
+                  </div>
+                  <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
+                  <div class="font-weight-bold mb-1">{{userLogin}}</div>
+                    {{massage}}
+                  </div>
+                </div>
+              {{/each}}
 						</div>
 					</div>
 
 					<div class="flex-grow-0 py-3 px-4 border-top">
-                            <form id="messageForm" class="input-group">
+                            <form id="messageForm" class="input-group" action="/chat/{{roomName}}" method="post">
                                 <input type="text" class="form-control" placeholder="Введите ваше сообщение" id="message">
                                 <input type="submit" value="Отправить" class="btn btn-primary">
                                 <input type="text" value={{userName}} id="UserName"class="d-none">                                
@@ -86,14 +97,17 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         $(function(){
+
             var socket = io.connect('http://localhost:3000'),
             $userName = $("#UserName"),
+            $roomName = $("#roomName"),
             $form = $("#messageForm"),
             $input = $("#message"),
-            $all_messages = $("#allMessage");
-
+            $all_messages = $("#allMessage"+$roomName.val());
         $form.submit(function(e){
             e.preventDefault();
+            console.log($input.val())
+            $.post("/chat/"+$roomName.val(), { msg: $input.val(), room: $roomName.val()} );
             socket.emit('send mess', {msg: $input.val(), user: $userName.val()});
             $input.val('');
         });

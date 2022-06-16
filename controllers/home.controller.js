@@ -28,9 +28,6 @@ class HomeController {
             .render('sign-in', { style: 'sing-in'})
     }
     async getChatRoom(req, res){
-        
-        console.log(req.params["roomName"])
-
         return res
         .status(200)
         .render('room', { 
@@ -38,8 +35,27 @@ class HomeController {
             style: 'chatroom',
             styleLvlTwo: '../',
             userName: `${req.signedCookies.email}`,
-            roomName: req.params["roomName"]
+            roomName: req.params["roomName"],
+            AllMassage: await prisma.massage.findMany({
+                where: {nameRoom: req.params["roomName"]},
+                orderBy: {created_at: 'asc'}, 
+            })
         })
+    }
+    async ioshechka(req,res){
+        console.log(req.body.msg)
+        console.log(req.body.room)
+        if(typeof req.body.msg == "undefined" || typeof req.body.room == "undefined"){
+            console.log('Чет не то')
+        }else{
+            await prisma.massage.create({
+                data: {
+                    userLogin: req.signedCookies.email,
+                    nameRoom: req.body.room,
+                    massage: req.body.msg,
+                },
+            })
+        }
     }
 }
 module.exports = new HomeController()

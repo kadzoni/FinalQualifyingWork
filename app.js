@@ -25,11 +25,12 @@ app.set("views", "./views");
 let users = [],
 connections = []
 io.sockets.on('connection', function(socket){
-console.log("Успешное соединение")
+console.log("Успешное соединение ")
 connections.push(socket);
+
 socket.on('disconnect',function(data){
-  connections.splice(connections.indexOf(socket),1);
-  console.log("Успешное отсоединение")
+connections.splice(connections.indexOf(socket),1);
+console.log("Успешное отсоединение")
 });
 
 socket.on('send mess', function(data){
