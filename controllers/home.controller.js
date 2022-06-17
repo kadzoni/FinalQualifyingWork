@@ -27,6 +27,11 @@ class HomeController {
             .status(200)
             .render('sign-in', { style: 'sing-in'})
     }
+    async getDocsPage(req,res){
+        return res
+            .status(200)
+            .render('docs', { style: 'docs', userName: `${req.signedCookies.email}`})
+    }
     async getChatRoom(req, res){
         return res
         .status(200)
@@ -47,6 +52,8 @@ class HomeController {
         console.log(req.body.room)
         if(typeof req.body.msg == "undefined" || typeof req.body.room == "undefined"){
             console.log('Чет не то')
+            return res             
+                .redirect('/')
         }else{
             await prisma.massage.create({
                 data: {

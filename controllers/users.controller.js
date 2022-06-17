@@ -51,7 +51,7 @@ class UsersController {
           }else{
             return res
             .status(200)
-            .render('sign-in', { title: 'Sing-up', style: 'sing-in', reg: "Неправильный пароль"})
+            .render('sign-in', { title: 'Sing-up', style: 'sing-in', userName: "Неправильный пароль"})
           }
         }else{
           this.signOut()
