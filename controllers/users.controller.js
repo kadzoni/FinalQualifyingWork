@@ -6,7 +6,6 @@ const bcrypt = require('bcryptjs'),
 const url = require('node:url')
 class UsersController {
   async signOut(req,res){
-    console.log('Чистим куку в singuot')
     return res
     .clearCookie('email', {signed: true})
     .redirect('/')
