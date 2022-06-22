@@ -34,6 +34,7 @@ class HomeController {
     }
     async getChatRoom(req, res){
         return res
+        .setHeader('Access-Control-Allow-Origin', '*')
         .status(200)
         .render('room', { 
             AllRooms: await prisma.chat_room.findMany(), 

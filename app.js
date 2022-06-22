@@ -3,27 +3,34 @@ const express = require('express'),
   routes = require('./routes/index'),
   path = require('path'),
   logger = require('morgan'),
-  cookie_parser = require('cookie-parser');
-app.use(cookie_parser('1234'))
-const host = process.env.HOST || '127.0.0.1'
-const port = process.env.PORT || 3000
-const io = require('socket.io')(app.listen(port));
-const { engine } = require ('express-handlebars');
+  http = require('http'),
+  cookie_parser = require('cookie-parser'),
+  { engine } = require ('express-handlebars'),
+  cors = require('cors');
 
-// подключаем статические файлы
-app.use(logger('dev'));
-app.use(express.static(path.join(__dirname, 'public')))
+  app.set('port', process.env.PORT || 3000);
+  app.set('host', process.env.HOST || '127.0.0.1');
+  app.use(cors({origin: '*'}));
+  app.use(cookie_parser('1234'));
+  app.use(logger('dev'));
+  app.use(express.static(path.join(__dirname, 'public')))
+  app.use(express.json())
+  app.use(express.urlencoded({ extended: true }))
+  app.engine('handlebars', engine());
+  app.set('view engine', 'handlebars');
+  app.set("views", "./views");
+  app.use('/', routes)
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
-// подключаем шаблоны
-app.engine('handlebars', engine());
-app.set('view engine', 'handlebars');
-app.set("views", "./views");
-
-let users = [],
-connections = []
+var server = http.createServer(app).listen(app.get('port'),app.get('host'), function(){
+  console.log(`Сервер запущен по адресу: http://${app.get('host')}:${app.get('port')}`)
+}),
+io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+let connections = []
 io.sockets.on('connection', function(socket){
 console.log("Успешное соединение ")
 connections.push(socket);
@@ -36,7 +43,6 @@ console.log("Успешное отсоединение")
 socket.on('send mess', function(data){
     var time = new Date();
     io.sockets.emit('add mess', {msg: data.msg, date: time.toLocaleDateString("en-US"), user: data.user});
-//   req.socket.broadcast.emit('add mess', {msg: data+"re"});
 });
 })
 
@@ -45,12 +51,9 @@ app.use(function(req,res,next){
   next();
 });
 
-// юзаем роуты
-app.use('/', routes)
-
 //ПОЕХАЛИ!
-app.listen(port, host, () =>
-  console.log(`Сервер запущен по адресу: http://${host}:${port}`)
-)
+// app.listen(port, host, () =>
+//   console.log(`Сервер запущен по адресу: http://${host}:${port}`)
+// )
 
 module.exports = app;
